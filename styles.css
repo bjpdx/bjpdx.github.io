@@ -5,3 +5,26 @@ body {
     margin: 0;
     padding: 0;
 }
+.crystal-trail {
+  position: fixed;
+  pointer-events: none;
+  width: 20px;
+  height: 20px;
+  /* 棱角形状，模拟水晶切面 */
+  border-radius: 35% 65% 55% 45% / 40% 35% 65% 60%;
+  background: 
+    linear-gradient(135deg, #89f5ff 0%, #a259ff 90%),
+    radial-gradient(circle at 70% 30%, #ffffff99 0%, transparent 70%);
+  box-shadow: 
+    0 0 16px 4px #a259ff88,
+    0 0 32px 8px #75eaff44,
+    0 0 0 2px #b6aaffcc inset,
+    0 1.5px 3px #fff8,
+    0 0 24px #b6aaff55;
+  border: 1.5px solid #e6ddffcc;
+  opacity: 0.89;
+  transition: opacity 0.6s, transform 0.6s;
+  z-index: 9999;
+  will-change: opacity, transform;
+  mix-blend-mode: lighten;
+}
