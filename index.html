@@ -38,39 +38,3 @@
     <script src="scripts.js"></script>
 </body>
 </html>
-
-<!-- 在 <head> 部分加入基础样式 -->
-<style>
-.galaxy-tail {
-  position: fixed;
-  pointer-events: none;
-  border-radius: 50%;
-  will-change: transform, opacity;
-  z-index: 9999;
-  width: 8px;
-  height: 8px;
-  background: radial-gradient(circle, #fff 60%, #a0e7ff 100%);
-  box-shadow: 0 0 16px 4px #fff, 0 0 32px 20px #00f0ff40;
-  opacity: 0.85;
-  transition: opacity 0.5s;
-}
-</style>
-
-<!-- 在 </body> 之前插入以下脚本 -->
-<script>
-document.addEventListener('mousemove', function(e) {
-  const dot = document.createElement('div');
-  dot.className = 'galaxy-tail';
-  dot.style.left = (e.clientX - 4) + 'px';
-  dot.style.top = (e.clientY - 4) + 'px';
-  dot.style.opacity = Math.random() * 0.5 + 0.5; // 随机透明度
-  dot.style.transform = `scale(${Math.random() * 0.8 + 0.7}) rotate(${Math.random()*360}deg)`;
-
-  document.body.appendChild(dot);
-
-  setTimeout(() => {
-    dot.style.opacity = 0;
-    setTimeout(() => dot.remove(), 700);
-  }, 10);
-});
-</script>
