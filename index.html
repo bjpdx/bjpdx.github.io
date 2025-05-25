@@ -55,6 +55,23 @@
         </div>
     </footer>
     <script src="scripts.js"></script>
+
+    <script>
+document.addEventListener('click', function(e) {
+  const colorArr = ['#ff80ab', '#40c4ff', '#ffd740', '#a7ffeb', '#b388ff', '#ffd54f', '#ff5252'];
+  const el = document.createElement('div');
+  el.className = 'click-effect';
+  const size = Math.random() * 30 + 30;
+  el.style.width = size + 'px';
+  el.style.height = size + 'px';
+  el.style.left = (e.clientX - size / 2) + 'px';
+  el.style.top = (e.clientY - size / 2) + 'px';
+  el.style.background = colorArr[Math.floor(Math.random() * colorArr.length)];
+  document.body.appendChild(el);
+  el.addEventListener('animationend', () => el.remove());
+});
+</script>
+    
 </body>
 </html>
 
