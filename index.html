@@ -38,7 +38,41 @@
     <script src="scripts.js"></script>
 </body>
 </html>
+<!-- 鼠标拖尾特效示例 -->
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .trail {
+      position: fixed;
+      pointer-events: none;
+      border-radius: 50%;
+      width: 10px;
+      height: 10px;
+      background: radial-gradient(circle at 30% 30%, #ff8c00 80%, #ff0080 100%);
+      opacity: 0.7;
+      transition: opacity 0.5s;
+      z-index: 9999;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    document.addEventListener('mousemove', function(e) {
+      const dot = document.createElement('div');
+      dot.className = 'trail';
+      dot.style.left = (e.clientX - 5) + 'px';
+      dot.style.top = (e.clientY - 5) + 'px';
+      document.body.appendChild(dot);
 
+      setTimeout(() => {
+        dot.style.opacity = '0';
+        setTimeout(() => dot.remove(), 500);
+      }, 50);
+    });
+  </script>
+</body>
+</html>
 
 
 
