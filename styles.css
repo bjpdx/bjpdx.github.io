@@ -1,6 +1,6 @@
 body {
     /* 线性渐变：从左上到右下，颜色从#ffecd2到#fcb69f */
-    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    background: linear-gradient(135deg, #009ad6 0%, #90d7ec 100%);
     min-height: 100vh;
     margin: 0;
     padding: 0;
