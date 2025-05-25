@@ -9,20 +9,16 @@
 </head>
     
     <style>
-.click-effect {
+.galaxy-particle {
   position: fixed;
   pointer-events: none;
   border-radius: 50%;
-  opacity: 0.75;
-  transform: scale(0);
-  animation: clickEffect 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform, opacity;
   z-index: 9999;
-}
-@keyframes clickEffect {
-  to {
-    opacity: 0;
-    transform: scale(2.5);
-  }
+  background: radial-gradient(circle, #fff 60%, #a0e7ff 100%);
+  box-shadow: 0 0 12px 4px #fff, 0 0 32px 12px #00f0ff70;
+  opacity: 0.9;
+  transition: opacity 0.6s;
 }
 </style>
     
@@ -58,17 +54,41 @@
 
     <script>
 document.addEventListener('click', function(e) {
-  const colorArr = ['#ff80ab', '#40c4ff', '#ffd740', '#a7ffeb', '#b388ff', '#ffd54f', '#ff5252'];
-  const el = document.createElement('div');
-  el.className = 'click-effect';
-  const size = Math.random() * 30 + 30;
-  el.style.width = size + 'px';
-  el.style.height = size + 'px';
-  el.style.left = (e.clientX - size / 2) + 'px';
-  el.style.top = (e.clientY - size / 2) + 'px';
-  el.style.background = colorArr[Math.floor(Math.random() * colorArr.length)];
-  document.body.appendChild(el);
-  el.addEventListener('animationend', () => el.remove());
+  const particles = 36; // 颗粒数量
+  for (let i = 0; i < particles; i++) {
+    const star = document.createElement('div');
+    star.className = 'galaxy-particle';
+    const size = Math.random() * 3 + 3;
+    star.style.width = size + 'px';
+    star.style.height = size + 'px';
+    // 初始位置
+    star.style.left = (e.clientX - size / 2) + 'px';
+    star.style.top = (e.clientY - size / 2) + 'px';
+    // 随机色
+    const colors = ['#fff','#a0e7ff','#f3a0ff','#ffe9a7','#b4ff9f','#b388ff'];
+    star.style.background = `radial-gradient(circle, #fff 60%, ${colors[Math.floor(Math.random()*colors.length)]} 100%)`;
+    // 粒子飞行距离和方向
+    const angle = (2 * Math.PI * i) / particles;
+    const distance = Math.random() * 60 + 30;
+    const x = Math.cos(angle) * distance;
+    const y = Math.sin(angle) * distance;
+    // 动画
+    star.animate([
+      { 
+        transform: `translate(0, 0) scale(${Math.random()*0.7+0.7})`, 
+        opacity: 1 
+      },
+      { 
+        transform: `translate(${x}px, ${y}px) scale(0.6)`, 
+        opacity: 0 
+      }
+    ], {
+      duration: 900 + Math.random()*400,
+      easing: 'cubic-bezier(.61,.7,.3,1.2)'
+    });
+    setTimeout(()=>{ star.remove(); }, 1350);
+    document.body.appendChild(star);
+  }
 });
 </script>
     
