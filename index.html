@@ -38,47 +38,38 @@
     <script src="scripts.js"></script>
 </body>
 </html>
-<!-- 鼠标拖尾特效示例 -->
-<!DOCTYPE html>
-<html>
-<head>
-  <style>
-    .trail {
-      position: fixed;
-      pointer-events: none;
-      border-radius: 50%;
-      width: 10px;
-      height: 10px;
-      background: radial-gradient(circle at 30% 30%, #ff8c00 80%, #ff0080 100%);
-      opacity: 0.7;
-      transition: opacity 0.5s;
-      z-index: 9999;
-    }
-  </style>
-</head>
-<body>
-  <script>
-    document.addEventListener('mousemove', function(e) {
-      const dot = document.createElement('div');
-      dot.className = 'trail';
-      dot.style.left = (e.clientX - 5) + 'px';
-      dot.style.top = (e.clientY - 5) + 'px';
-      document.body.appendChild(dot);
+<!-- 鼠标蓝紫色水晶拖尾特效 -->
+<style>
+.crystal-trail {
+  position: fixed;
+  pointer-events: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #8ecaff 50%, #a259ff 100%);
+  box-shadow:
+    0 0 8px 4px #a259ff88,
+    0 0 16px 2px #8ecaffbb,
+    0 0 32px 8px #a259ff44;
+  opacity: 0.85;
+  transition: opacity 0.6s, transform 0.6s;
+  z-index: 9999;
+  will-change: opacity, transform;
+}
+</style>
+<script>
+document.addEventListener('mousemove', function(e) {
+  const dot = document.createElement('div');
+  dot.className = 'crystal-trail';
+  dot.style.left = (e.clientX - 8) + 'px';
+  dot.style.top = (e.clientY - 8) + 'px';
+  dot.style.transform = `scale(${0.7 + Math.random()*0.6}) rotate(${Math.random()*360}deg)`;
+  document.body.appendChild(dot);
 
-      setTimeout(() => {
-        dot.style.opacity = '0';
-        setTimeout(() => dot.remove(), 500);
-      }, 50);
-    });
-  </script>
-</body>
-</html>
-
-
-
-
-
-
-
-
-
+  setTimeout(() => {
+    dot.style.opacity = '0';
+    dot.style.transform += ' scale(1.3)';
+    setTimeout(() => dot.remove(), 600);
+  }, 55);
+});
+</script>
