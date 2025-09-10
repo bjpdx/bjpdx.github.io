@@ -110,7 +110,7 @@
       setTimeout(createFloatingText, i * (maxDuration / floatCount));
     }
 
-    // 落下的书 emoji
+    // 落下的书 emoji，已去掉抽搐效果
     function createFallingBook() {
       const emoji = document.createElement('div');
       emoji.className = 'book-emoji';
@@ -129,7 +129,7 @@
         const progress = ts - start;
         const percent = progress / duration;
         emoji.style.top = (percent * 100) + 'vh';
-        emoji.style.transform = `rotate(${percent*180*(Math.random()>0.5?1:-1)}deg)`;
+        // 去掉 transform 相关代码，实现平滑下落
         if (percent < 1) {
           requestAnimationFrame(fall);
         } else {
