@@ -16,13 +16,15 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      font-size: 8vw; /* 最大 */
+      font-size: 8vw;
       color: #fff;
       font-weight: bold;
       z-index: 2;
       text-shadow: 0 0 30px #ffb;
       letter-spacing: .2em;
       font-family: 'STSong', 'SimSun', serif;
+      pointer-events: none;
+      user-select: none;
     }
     .floating {
       position: absolute;
@@ -34,12 +36,21 @@
       z-index: 1;
       user-select: none;
     }
+    .book-emoji {
+      position: absolute;
+      font-size: 2vw;
+      pointer-events: none;
+      user-select: none;
+      z-index: 0;
+      will-change: transform;
+      filter: drop-shadow(0 0 8px #fff8);
+    }
   </style>
 </head>
 <body>
   <div class="center-text">教师节快乐</div>
   <script>
-    // 可自定义字体、颜色等
+    // 随机样式参数
     const colors = ['#FF69B4', '#FFD700', '#00BFFF', '#ADFF2F', '#FF4500', '#9400D3', '#00FA9A', '#FFA500', '#1E90FF'];
     const fonts = [
       'SimHei, sans-serif',
@@ -57,7 +68,6 @@
     const maxDuration = 12000;
     const minTop = 5;
     const maxTop = 85;
-    // 飘动的字体比中间的最大要小
     const minSize = 2; // vw
     const maxSize = 6; // vw（8vw为中心最大）
 
@@ -65,8 +75,6 @@
       const el = document.createElement('div');
       el.className = 'floating';
       el.textContent = '教师节快乐';
-
-      // 随机样式
       const color = colors[Math.floor(Math.random() * colors.length)];
       const font = fonts[Math.floor(Math.random() * fonts.length)];
       const size = Math.random() * (maxSize - minSize) + minSize;
@@ -80,10 +88,7 @@
 
       document.body.appendChild(el);
 
-      // 动画时间
       const duration = Math.random() * (maxDuration - minDuration) + minDuration;
-
-      // 初始位置
       el.style.left = '100vw';
 
       let start = null;
@@ -101,11 +106,43 @@
       }
       requestAnimationFrame(move);
     }
-
-    // 初始化多个浮动文本
     for (let i = 0; i < floatCount; i++) {
       setTimeout(createFloatingText, i * (maxDuration / floatCount));
     }
+
+    // 落下的书 emoji
+    function createFallingBook() {
+      const emoji = document.createElement('div');
+      emoji.className = 'book-emoji';
+      emoji.textContent = '📚';
+      // 随机大小
+      emoji.style.fontSize = (Math.random() * 2 + 1.5) + 'vw';
+      // 随机横向位置
+      emoji.style.left = (Math.random() * 98) + 'vw';
+      emoji.style.top = '-5vw';
+      document.body.appendChild(emoji);
+
+      const duration = Math.random() * 2500 + 4000; // 4~6.5秒
+      let start = null;
+      function fall(ts) {
+        if (!start) start = ts;
+        const progress = ts - start;
+        const percent = progress / duration;
+        emoji.style.top = (percent * 100) + 'vh';
+        emoji.style.transform = `rotate(${percent*180*(Math.random()>0.5?1:-1)}deg)`;
+        if (percent < 1) {
+          requestAnimationFrame(fall);
+        } else {
+          emoji.remove();
+        }
+      }
+      requestAnimationFrame(fall);
+    }
+    // 不断制造书 emoji
+    setInterval(() => {
+      for(let i=0;i<Math.floor(Math.random()*2)+1;i++) createFallingBook();
+    }, 500);
+
   </script>
 </body>
 </html>
