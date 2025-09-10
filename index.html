@@ -22,18 +22,16 @@
       z-index: 2;
       text-shadow: 0 0 30px #ffb;
       letter-spacing: .2em;
+      font-family: 'STSong', 'SimSun', serif;
     }
     .floating {
       position: absolute;
       top: 0;
       left: 100vw;
-      font-size: 4vw;
       font-weight: bold;
-      color: rgba(255,255,255,0.15);
       white-space: nowrap;
       pointer-events: none;
       z-index: 1;
-      text-shadow: 0 0 30px #fff;
       user-select: none;
     }
   </style>
@@ -41,18 +39,44 @@
 <body>
   <div class="center-text">教师节快乐</div>
   <script>
-    // 数量与速度可调整
-    const floatCount = 8;
+    // 可自定义字体、颜色等
+    const colors = ['#FF69B4', '#FFD700', '#00BFFF', '#ADFF2F', '#FF4500', '#9400D3', '#00FA9A', '#FFA500', '#1E90FF'];
+    const fonts = [
+      'SimHei, sans-serif',
+      'STSong, serif',
+      'KaiTi, cursive',
+      'FangSong, serif',
+      'Arial Black, sans-serif',
+      'Impact, sans-serif',
+      'Comic Sans MS, cursive',
+      'Georgia, serif',
+      'Times New Roman, serif'
+    ];
+    const floatCount = 10;
     const minDuration = 5000;
     const maxDuration = 12000;
     const minTop = 5;
     const maxTop = 85;
+    const minSize = 2; // vw
+    const maxSize = 6; // vw
 
     function createFloatingText() {
       const el = document.createElement('div');
       el.className = 'floating';
       el.textContent = '教师节快乐';
+
+      // 随机样式
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      const font = fonts[Math.floor(Math.random() * fonts.length)];
+      const size = Math.random() * (maxSize - minSize) + minSize;
+      el.style.color = color;
+      el.style.fontSize = `${size}vw`;
+      el.style.fontFamily = font;
+      el.style.fontStyle = Math.random() > 0.5 ? 'italic' : 'normal';
+      el.style.fontWeight = Math.random() > 0.5 ? 'bold' : 'normal';
+      el.style.textShadow = `0 0 30px ${color}`;
       el.style.top = `${Math.random() * (maxTop - minTop) + minTop}vh`;
+
       document.body.appendChild(el);
 
       // 动画时间
@@ -61,19 +85,6 @@
       // 初始位置
       el.style.left = '100vw';
 
-      // 使用 Web Animations API
-      el.animate(
-        [
-          { left: '100vw' },
-          { left: '-35vw' }
-        ],
-        {
-          duration: duration,
-          easing: 'linear'
-        }
-      );
-
-      // 通过定时器移动
       let start = null;
       function move(ts) {
         if (!start) start = ts;
