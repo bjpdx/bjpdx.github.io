@@ -16,7 +16,7 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      font-size: 8vw;
+      font-size: 8vw; /* 最大 */
       color: #fff;
       font-weight: bold;
       z-index: 2;
@@ -57,8 +57,9 @@
     const maxDuration = 12000;
     const minTop = 5;
     const maxTop = 85;
+    // 飘动的字体比中间的最大要小
     const minSize = 2; // vw
-    const maxSize = 6; // vw
+    const maxSize = 6; // vw（8vw为中心最大）
 
     function createFloatingText() {
       const el = document.createElement('div');
