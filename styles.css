@@ -1,7 +1,1 @@
-body {
-    /* 线性渐变：从左上到右下，颜色从#ffecd2到#fcb69f */
-    background: linear-gradient(90deg, #e7f3ff 0%, #b0e0e6 100%);
-    min-height: 100vh;
-    margin: 0;
-    padding: 0;
-}
+
