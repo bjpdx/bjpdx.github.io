@@ -3,7 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <title>教师节快乐</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
   <style>
+    html {
+      font-size: 16px; /* 基础字体大小 */
+    }
     body {
       margin: 0;
       height: 100vh;
@@ -16,13 +20,13 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      font-size: 8vw;
+      font-size: 3rem; /* 原先8vw，现用rem更稳定 */
       color: #fff;
       font-weight: bold;
       z-index: 2;
       text-shadow: 0 0 30px #ffb;
       letter-spacing: .2em;
-      font-family: 'STSong', 'SimSun', serif;
+      font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial', 'Helvetica', 'SimHei', 'STSong', 'SimSun', 'KaiTi', 'FangSong', 'sans-serif';
       pointer-events: none;
       user-select: none;
     }
@@ -38,7 +42,7 @@
     }
     .book-emoji {
       position: absolute;
-      font-size: 2vw;
+      font-size: 1.2rem;
       pointer-events: none;
       user-select: none;
       z-index: 0;
@@ -53,11 +57,11 @@
     // 随机样式参数
     const colors = ['#FF69B4', '#FFD700', '#00BFFF', '#ADFF2F', '#FF4500', '#9400D3', '#00FA9A', '#FFA500', '#1E90FF'];
     const fonts = [
-      'SimHei, sans-serif',
+      'PingFang SC, Arial, sans-serif',
       'STSong, serif',
       'KaiTi, cursive',
       'FangSong, serif',
-      'Arial Black, sans-serif',
+      'Helvetica, Arial, sans-serif',
       'Impact, sans-serif',
       'Comic Sans MS, cursive',
       'Georgia, serif',
@@ -68,8 +72,8 @@
     const maxDuration = 12000;
     const minTop = 5;
     const maxTop = 85;
-    const minSize = 2; // vw
-    const maxSize = 6; // vw（8vw为中心最大）
+    const minSize = 1.2; // rem
+    const maxSize = 2.6; // rem，中心最大是3rem
 
     function createFloatingText() {
       const el = document.createElement('div');
@@ -79,7 +83,7 @@
       const font = fonts[Math.floor(Math.random() * fonts.length)];
       const size = Math.random() * (maxSize - minSize) + minSize;
       el.style.color = color;
-      el.style.fontSize = `${size}vw`;
+      el.style.fontSize = `${size}rem`;
       el.style.fontFamily = font;
       el.style.fontStyle = Math.random() > 0.5 ? 'italic' : 'normal';
       el.style.fontWeight = Math.random() > 0.5 ? 'bold' : 'normal';
@@ -110,16 +114,16 @@
       setTimeout(createFloatingText, i * (maxDuration / floatCount));
     }
 
-    // 落下的书 emoji，已去掉抽搐效果
+    // 落下的书 emoji
     function createFallingBook() {
       const emoji = document.createElement('div');
       emoji.className = 'book-emoji';
       emoji.textContent = '📚';
-      // 随机大小
-      emoji.style.fontSize = (Math.random() * 2 + 1.5) + 'vw';
+      // 随机大小（rem）
+      emoji.style.fontSize = (Math.random() * 0.8 + 1.2) + 'rem';
       // 随机横向位置
       emoji.style.left = (Math.random() * 98) + 'vw';
-      emoji.style.top = '-5vw';
+      emoji.style.top = '-2rem';
       document.body.appendChild(emoji);
 
       const duration = Math.random() * 2500 + 4000; // 4~6.5秒
@@ -129,7 +133,6 @@
         const progress = ts - start;
         const percent = progress / duration;
         emoji.style.top = (percent * 100) + 'vh';
-        // 去掉 transform 相关代码，实现平滑下落
         if (percent < 1) {
           requestAnimationFrame(fall);
         } else {
@@ -142,7 +145,6 @@
     setInterval(() => {
       for(let i=0;i<Math.floor(Math.random()*2)+1;i++) createFallingBook();
     }, 500);
-
   </script>
 </body>
 </html>
