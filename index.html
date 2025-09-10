@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <title>教师节快乐</title>
@@ -9,73 +9,91 @@
       height: 100vh;
       background: #000;
       overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .main-text {
       position: relative;
-      z-index: 2;
+    }
+    .center-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       font-size: 8vw;
       color: #fff;
       font-weight: bold;
-      text-align: center;
-      letter-spacing: 0.2em;
-      user-select: none;
+      z-index: 2;
+      text-shadow: 0 0 30px #ffb;
+      letter-spacing: .2em;
     }
-    .floating-text {
+    .floating {
       position: absolute;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%) rotate(-10deg);
-      font-size: 3vw;
-      font-weight: bold;
-      opacity: 0.8;
-      user-select: none;
-      pointer-events: none;
-      white-space: nowrap;
-      z-index: 1;
-    }
-    #container {
-      position: absolute;
-      width: 100vw;
-      height: 100vh;
-      left: 0;
       top: 0;
-      overflow: hidden;
+      left: 100vw;
+      font-size: 4vw;
+      font-weight: bold;
+      color: rgba(255,255,255,0.15);
+      white-space: nowrap;
+      pointer-events: none;
       z-index: 1;
+      text-shadow: 0 0 30px #fff;
+      user-select: none;
     }
   </style>
 </head>
 <body>
-  <div id="container"></div>
-  <div class="main-text">教师节快乐</div>
+  <div class="center-text">教师节快乐</div>
   <script>
-    const colors = [
-      "#FF5733", "#33FF57", "#3380FF", "#FF33A1",
-      "#FFD700", "#40E0D0", "#FF6347", "#ADFF2F",
-      "#00BFFF", "#FF7F50", "#FF1493", "#7B68EE"
-    ];
+    // 数量与速度可调整
+    const floatCount = 8;
+    const minDuration = 5000;
+    const maxDuration = 12000;
+    const minTop = 5;
+    const maxTop = 85;
 
     function createFloatingText() {
-      const text = document.createElement('div');
-      text.className = 'floating-text';
-      text.textContent = '教师节快乐';
-      text.style.color = colors[Math.floor(Math.random() * colors.length)];
-      // 随机旋转角度
-      text.style.transform = `translate(-50%, -50%) rotate(${Math.random() * 40 - 20}deg)`;
-      // 随机透明度
-      text.style.opacity = (Math.random() * 0.5 + 0.5).toFixed(2);
+      const el = document.createElement('div');
+      el.className = 'floating';
+      el.textContent = '教师节快乐';
+      el.style.top = `${Math.random() * (maxTop - minTop) + minTop}vh`;
+      document.body.appendChild(el);
 
-      document.getElementById('container').appendChild(text);
+      // 动画时间
+      const duration = Math.random() * (maxDuration - minDuration) + minDuration;
 
-      setTimeout(() => {
-        text.style.opacity = 0;
-        setTimeout(() => text.remove(), 1000);
-      }, 1200);
+      // 初始位置
+      el.style.left = '100vw';
+
+      // 使用 Web Animations API
+      el.animate(
+        [
+          { left: '100vw' },
+          { left: '-35vw' }
+        ],
+        {
+          duration: duration,
+          easing: 'linear'
+        }
+      );
+
+      // 通过定时器移动
+      let start = null;
+      function move(ts) {
+        if (!start) start = ts;
+        const progress = ts - start;
+        const percent = progress / duration;
+        el.style.left = (100 - 135 * percent) + 'vw';
+        if (percent < 1) {
+          requestAnimationFrame(move);
+        } else {
+          el.remove();
+          createFloatingText();
+        }
+      }
+      requestAnimationFrame(move);
     }
 
-    setInterval(createFloatingText, 300);
+    // 初始化多个浮动文本
+    for (let i = 0; i < floatCount; i++) {
+      setTimeout(createFloatingText, i * (maxDuration / floatCount));
+    }
   </script>
 </body>
 </html>
