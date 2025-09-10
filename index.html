@@ -7,11 +7,11 @@
     body {
       margin: 0;
       height: 100vh;
-      background: #000;
+      background: #2986d6; /* 始终蓝色 */
       overflow: hidden;
       position: relative;
     }
-    .sunrise-bg {
+    .sun-bg {
       position: absolute;
       width: 100vw;
       height: 100vh;
@@ -19,7 +19,6 @@
       top: 0;
       z-index: 0;
       pointer-events: none;
-      overflow: hidden;
     }
     .center-text {
       position: absolute;
@@ -52,19 +51,16 @@
       pointer-events: none;
       user-select: none;
       z-index: 1;
-      will-change: transform;
       filter: drop-shadow(0 0 8px #fff8);
     }
   </style>
 </head>
 <body>
-  <canvas id="sunrise-canvas" class="sunrise-bg"></canvas>
+  <canvas id="sun-canvas" class="sun-bg"></canvas>
   <div class="center-text">教师节快乐</div>
   <script>
-    // ======================
-    // 日出日落背景动画部分
-    // ======================
-    const canvas = document.getElementById('sunrise-canvas');
+    // 太阳日出日落动画（现实蓝色背景+自然光效）
+    const canvas = document.getElementById('sun-canvas');
     function resizeCanvas() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
@@ -72,96 +68,72 @@
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
-    function drawSunriseSunset(ctx, w, h, progress) {
+    function drawSun(ctx, w, h, progress) {
       ctx.clearRect(0, 0, w, h);
 
       // 地平线
       const horizonY = h * 0.7;
 
-      // 渐变天空
+      // 渐变天空始终蓝色
       const skyGradient = ctx.createLinearGradient(0, 0, 0, horizonY);
-      // 日出时偏橙黄，日落偏深蓝紫
-      const morningColor = '#FDB813';
-      const noonColor = '#87CEEB';
-      const duskColor = '#9400D3';
-
-      // 计算太阳高度
-      // progress: 0~1，一轮
-      // 太阳从地平线下->最高点->地平线下
-      let sunY = horizonY - Math.sin(progress * Math.PI) * horizonY * 0.7;
-      let sunX = w/2;
-
-      // 太阳光效强度（早晚更亮，中午最暗）
-      let sunGlowAlpha = 0.55 + 0.45 * Math.abs(Math.cos(progress * Math.PI));
-      let sunColor = "#FFF700";
-      let skyColor1, skyColor2, skyColor3;
-      if (progress < 0.5) {
-        // 日出
-        skyColor1 = morningColor;
-        skyColor2 = noonColor;
-        skyColor3 = "#ffffff";
-      } else {
-        // 日落
-        skyColor1 = noonColor;
-        skyColor2 = duskColor;
-        skyColor3 = "#001122";
-      }
-      skyGradient.addColorStop(0, skyColor1);
-      skyGradient.addColorStop(0.7, skyColor2);
-      skyGradient.addColorStop(1, skyColor3);
+      skyGradient.addColorStop(0, "#a6d8fb");
+      skyGradient.addColorStop(0.7, "#2986d6");
+      skyGradient.addColorStop(1, "#17579e");
 
       ctx.fillStyle = skyGradient;
       ctx.fillRect(0, 0, w, horizonY);
 
       // 地面
-      ctx.fillStyle = "#222";
+      ctx.fillStyle = "#18436b";
       ctx.fillRect(0, horizonY, w, h-horizonY);
 
-      // 太阳光环（大晕染）
-      let glowR = h * 0.25;
+      // 太阳运动：由左到右，模拟日出到日落
+      const sunRadius = h * 0.09;
+      const sunX = w * (0.15 + 0.7 * progress); // 从左到右
+      const sunY = horizonY - Math.sin(progress * Math.PI) * (h * 0.25);
+
+      // 太阳光晕
+      let glowR = sunRadius * 3;
       let glowGradient = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, glowR);
-      glowGradient.addColorStop(0, `rgba(255,255,160,${0.28*sunGlowAlpha})`);
-      glowGradient.addColorStop(0.3, `rgba(255,255,140,${0.12*sunGlowAlpha})`);
-      glowGradient.addColorStop(0.7, `rgba(255,200,90,0.05)`);
-      glowGradient.addColorStop(1, `rgba(255,200,0,0)`);
+      glowGradient.addColorStop(0, "rgba(255,255,220,0.30)");
+      glowGradient.addColorStop(0.4, "rgba(255,255,180,0.15)");
+      glowGradient.addColorStop(1, "rgba(255,255,180,0)");
       ctx.beginPath();
       ctx.arc(sunX, sunY, glowR, 0, 2*Math.PI);
       ctx.fillStyle = glowGradient;
-      ctx.globalAlpha = 1.0;
+      ctx.globalAlpha = 1;
       ctx.fill();
 
       // 太阳本体
-      let sunR = h * 0.09;
-      let sunGradient = ctx.createRadialGradient(sunX, sunY, sunR*0.2, sunX, sunY, sunR);
-      sunGradient.addColorStop(0, `rgba(255,255,190,1)`);
-      sunGradient.addColorStop(0.5, `rgba(255,255,0,${0.9*sunGlowAlpha})`);
-      sunGradient.addColorStop(1, `rgba(255,200,0,${0.5*sunGlowAlpha})`);
+      let sunGradient = ctx.createRadialGradient(sunX, sunY, sunRadius*0.2, sunX, sunY, sunRadius);
+      sunGradient.addColorStop(0, "rgba(255,255,200,1)");
+      sunGradient.addColorStop(0.7, "rgba(255,255,100,0.85)");
+      sunGradient.addColorStop(1, "rgba(255,220,120,0.6)");
       ctx.beginPath();
-      ctx.arc(sunX, sunY, sunR, 0, 2*Math.PI);
+      ctx.arc(sunX, sunY, sunRadius, 0, 2*Math.PI);
       ctx.fillStyle = sunGradient;
-      ctx.globalAlpha = 1.0;
-      ctx.shadowColor = "rgba(255,255,160,0.7)";
-      ctx.shadowBlur = 30;
+      ctx.shadowColor = "rgba(255,255,220,0.7)";
+      ctx.shadowBlur = 40;
       ctx.fill();
 
       ctx.shadowBlur = 0;
       ctx.globalAlpha = 1.0;
     }
 
-    let sunriseStart = Date.now();
-    function animateSunrise() {
+    // 动画驱动
+    let startTime = Date.now();
+    function animateSun() {
       const w = canvas.width, h = canvas.height;
-      const cycle = 9; // 秒，日出日落一轮
+      const cycle = 16; // 一轮日出-日落时间（秒）
       const now = Date.now();
-      const progress = ((now - sunriseStart)/1000 % cycle) / cycle; // 0~1
-      drawSunriseSunset(canvas.getContext('2d'), w, h, progress);
-      requestAnimationFrame(animateSunrise);
+      // progress: 0~1
+      const progress = ((now - startTime)/1000 % cycle) / cycle;
+      drawSun(canvas.getContext('2d'), w, h, progress);
+      requestAnimationFrame(animateSun);
     }
-    animateSunrise();
+    animateSun();
 
-    // ======================
     // 飘动教师节快乐
-    // ======================
     const colors = ['#FF69B4', '#FFD700', '#00BFFF', '#ADFF2F', '#FF4500', '#9400D3', '#00FA9A', '#FFA500', '#1E90FF'];
     const fonts = [
       'SimHei, sans-serif',
@@ -221,9 +193,7 @@
       setTimeout(createFloatingText, i * (maxDuration / floatCount));
     }
 
-    // ======================
     // 落下的书 emoji
-    // ======================
     function createFallingBook() {
       const emoji = document.createElement('div');
       emoji.className = 'book-emoji';
