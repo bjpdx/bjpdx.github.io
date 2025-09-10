@@ -11,6 +11,16 @@
       overflow: hidden;
       position: relative;
     }
+    .sunrise-bg {
+      position: absolute;
+      width: 100vw;
+      height: 100vh;
+      left: 0;
+      top: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
     .center-text {
       position: absolute;
       top: 50%;
@@ -41,16 +51,117 @@
       font-size: 2vw;
       pointer-events: none;
       user-select: none;
-      z-index: 0;
+      z-index: 1;
       will-change: transform;
       filter: drop-shadow(0 0 8px #fff8);
     }
   </style>
 </head>
 <body>
+  <canvas id="sunrise-canvas" class="sunrise-bg"></canvas>
   <div class="center-text">教师节快乐</div>
   <script>
-    // 随机样式参数
+    // ======================
+    // 日出日落背景动画部分
+    // ======================
+    const canvas = document.getElementById('sunrise-canvas');
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    function drawSunriseSunset(ctx, w, h, progress) {
+      ctx.clearRect(0, 0, w, h);
+
+      // 地平线
+      const horizonY = h * 0.7;
+
+      // 渐变天空
+      const skyGradient = ctx.createLinearGradient(0, 0, 0, horizonY);
+      // 日出时偏橙黄，日落偏深蓝紫
+      const morningColor = '#FDB813';
+      const noonColor = '#87CEEB';
+      const duskColor = '#9400D3';
+
+      // 计算太阳高度
+      // progress: 0~1，一轮
+      // 太阳从地平线下->最高点->地平线下
+      let sunY = horizonY - Math.sin(progress * Math.PI) * horizonY * 0.7;
+      let sunX = w/2;
+
+      // 太阳光效强度（早晚更亮，中午最暗）
+      let sunGlowAlpha = 0.55 + 0.45 * Math.abs(Math.cos(progress * Math.PI));
+      let sunColor = "#FFF700";
+      let skyColor1, skyColor2, skyColor3;
+      if (progress < 0.5) {
+        // 日出
+        skyColor1 = morningColor;
+        skyColor2 = noonColor;
+        skyColor3 = "#ffffff";
+      } else {
+        // 日落
+        skyColor1 = noonColor;
+        skyColor2 = duskColor;
+        skyColor3 = "#001122";
+      }
+      skyGradient.addColorStop(0, skyColor1);
+      skyGradient.addColorStop(0.7, skyColor2);
+      skyGradient.addColorStop(1, skyColor3);
+
+      ctx.fillStyle = skyGradient;
+      ctx.fillRect(0, 0, w, horizonY);
+
+      // 地面
+      ctx.fillStyle = "#222";
+      ctx.fillRect(0, horizonY, w, h-horizonY);
+
+      // 太阳光环（大晕染）
+      let glowR = h * 0.25;
+      let glowGradient = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, glowR);
+      glowGradient.addColorStop(0, `rgba(255,255,160,${0.28*sunGlowAlpha})`);
+      glowGradient.addColorStop(0.3, `rgba(255,255,140,${0.12*sunGlowAlpha})`);
+      glowGradient.addColorStop(0.7, `rgba(255,200,90,0.05)`);
+      glowGradient.addColorStop(1, `rgba(255,200,0,0)`);
+      ctx.beginPath();
+      ctx.arc(sunX, sunY, glowR, 0, 2*Math.PI);
+      ctx.fillStyle = glowGradient;
+      ctx.globalAlpha = 1.0;
+      ctx.fill();
+
+      // 太阳本体
+      let sunR = h * 0.09;
+      let sunGradient = ctx.createRadialGradient(sunX, sunY, sunR*0.2, sunX, sunY, sunR);
+      sunGradient.addColorStop(0, `rgba(255,255,190,1)`);
+      sunGradient.addColorStop(0.5, `rgba(255,255,0,${0.9*sunGlowAlpha})`);
+      sunGradient.addColorStop(1, `rgba(255,200,0,${0.5*sunGlowAlpha})`);
+      ctx.beginPath();
+      ctx.arc(sunX, sunY, sunR, 0, 2*Math.PI);
+      ctx.fillStyle = sunGradient;
+      ctx.globalAlpha = 1.0;
+      ctx.shadowColor = "rgba(255,255,160,0.7)";
+      ctx.shadowBlur = 30;
+      ctx.fill();
+
+      ctx.shadowBlur = 0;
+      ctx.globalAlpha = 1.0;
+    }
+
+    let sunriseStart = Date.now();
+    function animateSunrise() {
+      const w = canvas.width, h = canvas.height;
+      const cycle = 9; // 秒，日出日落一轮
+      const now = Date.now();
+      const progress = ((now - sunriseStart)/1000 % cycle) / cycle; // 0~1
+      drawSunriseSunset(canvas.getContext('2d'), w, h, progress);
+      requestAnimationFrame(animateSunrise);
+    }
+    animateSunrise();
+
+    // ======================
+    // 飘动教师节快乐
+    // ======================
     const colors = ['#FF69B4', '#FFD700', '#00BFFF', '#ADFF2F', '#FF4500', '#9400D3', '#00FA9A', '#FFA500', '#1E90FF'];
     const fonts = [
       'SimHei, sans-serif',
@@ -110,14 +221,14 @@
       setTimeout(createFloatingText, i * (maxDuration / floatCount));
     }
 
-    // 落下的书 emoji，已去掉抽搐效果
+    // ======================
+    // 落下的书 emoji
+    // ======================
     function createFallingBook() {
       const emoji = document.createElement('div');
       emoji.className = 'book-emoji';
       emoji.textContent = '📚';
-      // 随机大小
       emoji.style.fontSize = (Math.random() * 2 + 1.5) + 'vw';
-      // 随机横向位置
       emoji.style.left = (Math.random() * 98) + 'vw';
       emoji.style.top = '-5vw';
       document.body.appendChild(emoji);
@@ -129,7 +240,6 @@
         const progress = ts - start;
         const percent = progress / duration;
         emoji.style.top = (percent * 100) + 'vh';
-        // 去掉 transform 相关代码，实现平滑下落
         if (percent < 1) {
           requestAnimationFrame(fall);
         } else {
@@ -138,7 +248,6 @@
       }
       requestAnimationFrame(fall);
     }
-    // 不断制造书 emoji
     setInterval(() => {
       for(let i=0;i<Math.floor(Math.random()*2)+1;i++) createFallingBook();
     }, 500);
